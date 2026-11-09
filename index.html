@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angkatan Website & Admin Management - VORTEX '26</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glow-bg {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.7); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 min-h-screen relative overflow-x-hidden">
+
+    <!-- Glowing Background Orbs -->
+    <div class="glow-bg w-96 h-96 bg-indigo-500 top-0 -left-20"></div>
+    <div class="glow-bg w-96 h-96 bg-purple-500 top-1/3 -right-20"></div>
+    <div class="glow-bg w-96 h-96 bg-cyan-500 bottom-10 left-10"></div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 w-full z-40 px-4 py-3">
+        <div class="max-w-7xl mx-auto glass rounded-2xl px-5 py-3 flex items-center justify-between shadow-lg">
+            <a href="#" class="flex items-center gap-3 group">
+                <div id="siteBadge" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:scale-105 transition-transform">
+                    26
+                </div>
+                <div>
+                    <span id="navSiteTitle" class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">VORTEX '26</span>
+                    <span class="block text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-widest uppercase">Official Class Portal</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-1 text-sm font-semibold">
+                <a href="#about" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Tentang</a>
+                <a href="#structure" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Pengurus</a>
+                <a href="#members" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Anggota</a>
+                <a href="#gallery" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Galeri</a>
+                <a href="#timeline" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Timeline</a>
+                <a href="#guestbook" class="px-3 py-2 rounded-xl hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors">Pesan</a>
+            </nav>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Admin Auth Button -->
+                <button id="adminAuthBtn" onclick="toggleAdminView()" class="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600/10 text-indigo-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center gap-2 border border-indigo-500/20">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="adminBtnText">Login Admin</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="themeToggle" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-slate-700 dark:text-slate-200 hover:scale-105 transition-all">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden w-10 h-10 rounded-xl glass-card flex items-center justify-center text-slate-700 dark:text-slate-200">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden md:hidden max-w-7xl mx-auto mt-2 glass rounded-2xl p-4 flex flex-col gap-2 shadow-xl">
+            <a href="#about" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Tentang</a>
+            <a href="#structure" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Pengurus</a>
+            <a href="#members" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Anggota</a>
+            <a href="#gallery" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Galeri</a>
+            <a href="#timeline" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Timeline</a>
+            <a href="#guestbook" class="px-4 py-2 rounded-xl hover:bg-indigo-500/10 font-medium">Pesan & Kesan</a>
+        </div>
+    </header>
+
+    <!-- PUBLIC WEBSITE VIEW -->
+    <div id="publicView">
+        <main class="pt-28 pb-16 px-4">
+            
+            <!-- HERO SECTION -->
+            <section class="max-w-7xl mx-auto min-h-[80vh] flex flex-col justify-center items-center text-center relative z-10 my-4">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-6 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+                    Portal Resmi Angkatan & Archive Kenangan
+                </div>
+                
+                <h1 id="heroTitle" class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                    Satu Cerita, <br class="hidden sm:inline"/>
+                    <span id="heroTagline" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        Sejuta Kenangan Abadi
+                    </span>
+                </h1>
+                
+                <p id="heroQuote" class="max-w-2xl text-slate-600 dark:text-slate-300 text-base sm:text-lg mb-8 leading-relaxed font-normal">
+                    "We came as strangers, stayed as family, and leave as legends." — Dokumentasi perjalanan, tawa, perjuangan, dan impian bersama.
+                </p>
+
+                <div class="flex flex-wrap items-center justify-center gap-4 mb-12">
+                    <a href="#members" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all">
+                        Jelajahi Anggota <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                    <a href="#gallery" class="px-7 py-3.5 rounded-2xl glass-card font-semibold hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all">
+                        Lihat Galeri <i class="fa-solid fa-images ml-2 text-sm text-indigo-500"></i>
+                    </a>
+                </div>
+
+                <!-- Banner Photo -->
+                <div class="w-full max-w-5xl rounded-3xl p-3 glass shadow-2xl relative overflow-hidden group">
+                    <div class="relative overflow-hidden rounded-2xl aspect-[16/9] md:aspect-[21/9]">
+                        <img id="heroBannerImg" src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1600&q=80" alt="Banner Foto Angkatan" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-6 md:p-8">
+                            <div class="text-left text-white">
+                                <span class="px-3 py-1 rounded-md bg-white/20 backdrop-blur-md text-xs font-medium tracking-wide uppercase">Grand Photo Session</span>
+                                <h3 id="bannerTitle" class="text-xl md:text-2xl font-bold mt-2">VORTEX CLASS 2026</h3>
+                                <p id="bannerSub" class="text-xs md:text-sm text-slate-300">Gedung Serbaguna Utama • Dokumentasi Kelulusan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABOUT & STATS -->
+            <section id="about" class="max-w-7xl mx-auto py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-xl font-bold mb-4">
+                                <i class="fa-solid fa-compass"></i>
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-bold mb-4">Filosofi & Identitas Angkatan</h2>
+                            <p id="aboutDesc" class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                Nama VORTEX '26 melambangkan pusaran positif yang menyatukan beragam karakter, bakat, dan latar belakang menjadi satu kesatuan yang solid dan berdaya saing tinggi.
+                            </p>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800/60 flex flex-wrap gap-6 text-sm">
+                            <div>
+                                <span class="block text-xs text-slate-500 uppercase font-semibold">Tahun Masuk</span>
+                                <span id="statYearIn" class="font-bold text-lg">2022</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-slate-500 uppercase font-semibold">Tahun Lulus</span>
+                                <span id="statYearOut" class="font-bold text-lg">2026</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-slate-500 uppercase font-semibold">Slogan Utama</span>
+                                <span id="statSlogan" class="font-bold text-lg text-indigo-500">Unite to Conquer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Stats -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-center items-center text-center">
+                            <div class="w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-users"></i></div>
+                            <span id="statMembersCount" class="text-3xl font-extrabold text-indigo-500">0</span>
+                            <span class="text-xs font-semibold text-slate-500 mt-1">Total Anggota</span>
+                        </div>
+                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-center items-center text-center">
+                            <div class="w-12 h-12 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-layer-group"></i></div>
+                            <span id="statClassCount" class="text-3xl font-extrabold text-purple-500">4</span>
+                            <span class="text-xs font-semibold text-slate-500 mt-1">Kelas / Divisi</span>
+                        </div>
+                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-center items-center text-center">
+                            <div class="w-12 h-12 rounded-full bg-pink-500/10 text-pink-500 flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-image"></i></div>
+                            <span id="statGalleryCount" class="text-3xl font-extrabold text-pink-500">0</span>
+                            <span class="text-xs font-semibold text-slate-500 mt-1">Dokumentasi Foto</span>
+                        </div>
+                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-center items-center text-center">
+                            <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl mb-2"><i class="fa-solid fa-comments"></i></div>
+                            <span id="statMessagesCount" class="text-3xl font-extrabold text-emerald-500">0</span>
+                            <span class="text-xs font-semibold text-slate-500 mt-1">Pesan Kesan</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STRUCTURE ORGANIZATIONAL -->
+            <section id="structure" class="max-w-7xl mx-auto py-16">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-3xl font-extrabold mb-3">Struktur Pengurus Angkatan</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">Tim penggerak dan koordinator utama angkatan.</p>
+                </div>
+
+                <div id="structureGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- MEMBERS DIRECTORY -->
+            <section id="members" class="max-w-7xl mx-auto py-16">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold mb-2">Direktori Anggota</h2>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm">Temukan profil dan cita-cita teman angkatanmu.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 sm:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="memberSearch" placeholder="Cari nama / cita-cita..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <select id="classFilter" class="px-4 py-2.5 rounded-2xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                            <option value="all" class="bg-slate-900 text-white">Semua Kelas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="membersContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Members injected dynamically -->
+                </div>
+            </section>
+
+            <!-- GALLERY SECTION -->
+            <section id="gallery" class="max-w-7xl mx-auto py-16">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-3xl font-extrabold mb-3">Galeri & Dokumentasi</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">Album kenangan visual perjalanan bersama.</p>
+
+                    <div id="galleryFilterContainer" class="flex flex-wrap justify-center gap-2 mt-6">
+                        <button class="gallery-filter-btn active px-4 py-2 rounded-xl text-xs font-semibold glass-card bg-indigo-600 text-white" data-filter="all">Semua</button>
+                    </div>
+                </div>
+
+                <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Gallery Items -->
+                </div>
+            </section>
+
+            <!-- TIMELINE -->
+            <section id="timeline" class="max-w-5xl mx-auto py-16">
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <h2 class="text-3xl font-extrabold mb-3">Timeline Perjalanan</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm">Jejak momen penting sejak hari pertama hingga kelulusan.</p>
+                </div>
+
+                <div class="relative border-l-2 border-indigo-500/30 ml-4 md:ml-32 space-y-12">
+                    <div class="relative pl-8 md:pl-12">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-indigo-500 ring-4 ring-slate-50 dark:ring-slate-950"></div>
+                        <div class="hidden md:block absolute -left-32 top-0 text-sm font-extrabold text-indigo-500">Juli 2022</div>
+                        <div class="glass-card p-6 rounded-3xl">
+                            <span class="md:hidden text-xs font-bold text-indigo-500 mb-1 block">Juli 2022</span>
+                            <h3 class="text-lg font-bold">Awal Pertemuan (MPLS)</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">Pertama kali berkumpul sebagai satu angkatan VORTEX.</p>
+                        </div>
+                    </div>
+                    <div class="relative pl-8 md:pl-12">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-purple-500 ring-4 ring-slate-50 dark:ring-slate-950"></div>
+                        <div class="hidden md:block absolute -left-32 top-0 text-sm font-extrabold text-purple-500">Agustus 2023</div>
+                        <div class="glass-card p-6 rounded-3xl">
+                            <span class="md:hidden text-xs font-bold text-purple-500 mb-1 block">Agustus 2023</span>
+                            <h3 class="text-lg font-bold">Class Meeting & Pentas Seni</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">Momen persatuan angkatan merayakan ajang kreativitas bersama.</p>
+                        </div>
+                    </div>
+                    <div class="relative pl-8 md:pl-12">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-pink-500 ring-4 ring-slate-50 dark:ring-slate-950"></div>
+                        <div class="hidden md:block absolute -left-32 top-0 text-sm font-extrabold text-pink-500">Juni 2026</div>
+                        <div class="glass-card p-6 rounded-3xl">
+                            <span class="md:hidden text-xs font-bold text-pink-500 mb-1 block">Juni 2026</span>
+                            <h3 class="text-lg font-bold">Graduation Night</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">Pelepasan resmi angkatan menuju pintu gerbang kesuksesan baru.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GUESTBOOK -->
+            <section id="guestbook" class="max-w-7xl mx-auto py-16">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="glass-card p-8 rounded-3xl">
+                        <h2 class="text-2xl font-bold mb-2">Tulis Pesan & Kesan</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Tinggalkan pesan hangat untuk teman-teman angkatan.</p>
+
+                        <form id="guestbookForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Nama Kamu</label>
+                                <input type="text" id="gbName" required placeholder="Contoh: Budi Santoso" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Kelas / Status</label>
+                                <input type="text" id="gbRole" required placeholder="Contoh: XII IPA 1" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold mb-1">Pesan</label>
+                                <textarea id="gbMessage" required rows="4" placeholder="Tuliskan harapan & kesan..." class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-md hover:opacity-90 transition-all">
+                                Kirim Pesan <i class="fa-solid fa-paper-plane ml-2 text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 space-y-4">
+                        <h2 class="text-2xl font-bold mb-4 flex items-center justify-between">
+                            <span>Buku Tamu</span>
+                            <span id="gbCount" class="text-xs font-normal px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-500">0 Pesan</span>
+                        </h2>
+                        <div id="messagesFeed" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                            <!-- Messages dynamically added -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ADMIN PANEL & CMS VIEW (HIDDEN BY DEFAULT) -->
+    <div id="adminView" class="hidden pt-28 pb-16 px-4 max-w-7xl mx-auto">
+        <!-- AUTH SECTION (IF NOT LOGGED IN) -->
+        <div id="adminAuthSection" class="max-w-md mx-auto glass-card p-8 rounded-3xl shadow-2xl my-12">
+            <div class="flex border-b border-slate-700/50 mb-6">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center font-bold text-sm text-indigo-500 border-b-2 border-indigo-500">Login Admin</button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 pb-3 text-center font-bold text-sm text-slate-400 hover:text-slate-200">Daftar Admin Baru</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <h3 class="text-xl font-bold mb-2">Masuk Panel Admin</h3>
+                <p class="text-xs text-slate-400 mb-4">Masuk untuk mengelola data anggota, pengurus, dan informasi angkatan.</p>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Email Admin</label>
+                    <input type="email" id="loginEmail" required placeholder="admin@angkatan.com" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-md hover:bg-indigo-500 transition-all">
+                    Masuk Sekarang <i class="fa-solid fa-right-to-bracket ml-1"></i>
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="adminRegisterForm" onsubmit="handleAdminRegister(event)" class="hidden space-y-4">
+                <h3 class="text-xl font-bold mb-2">Pendaftaran Admin Baru</h3>
+                <p class="text-xs text-slate-400 mb-4">Masukkan Kode Registrasi Angkatan untuk memverifikasi hak akses.</p>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Nama Lengkap Admin</label>
+                    <input type="text" id="regName" required placeholder="Misal: Panitia Angkatan" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Email</label>
+                    <input type="email" id="regEmail" required placeholder="admin@angkatan.com" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Password Baru</label>
+                    <input type="password" id="regPassword" required placeholder="Minimal 6 karakter" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Kode Angkatan (Passcode)</label>
+                    <input type="password" id="regPasscode" required placeholder="Default: VORTEX2026" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span class="text-[10px] text-slate-400 mt-1 block">*Kode default sistem: <strong>VORTEX2026</strong></span>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold text-sm shadow-md hover:bg-emerald-500 transition-all">
+                    Daftar Sebagai Admin <i class="fa-solid fa-user-plus ml-1"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- DASHBOARD CMS (IF LOGGED IN) -->
+        <div id="adminDashboardSection" class="hidden space-y-8">
+            <!-- Header Status -->
+            <div class="glass-card p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Dashboard CMS Admin</span>
+                        <h2 class="text-2xl font-extrabold">Selamat Datang, <span id="currentAdminName">Admin</span>!</h2>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="exportDataJSON()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white hover:bg-purple-500 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Backup Data (JSON)
+                    </button>
+                    <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600/20 text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white transition-all">
+                        Logout <i class="fa-solid fa-power-off ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB CMS NAVIGATION -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-700/50 pb-3">
+                <button onclick="switchCmsTab('general')" id="cmsTabGeneral" class="cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white">Identitas & Teks</button>
+                <button onclick="switchCmsTab('members')" id="cmsTabMembers" class="cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold glass-card hover:bg-indigo-500/20">Kelola Anggota</button>
+                <button onclick="switchCmsTab('structure')" id="cmsTabStructure" class="cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold glass-card hover:bg-indigo-500/20">Kelola Pengurus</button>
+                <button onclick="switchCmsTab('gallery')" id="cmsTabGallery" class="cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold glass-card hover:bg-indigo-500/20">Kelola Galeri</button>
+            </div>
+
+            <!-- TAB 1: GENERAL SETTINGS -->
+            <div id="cmsContentGeneral" class="cms-content-block glass-card p-6 rounded-3xl space-y-6">
+                <h3 class="text-lg font-bold border-b border-slate-700/50 pb-3">Pengaturan Identitas & Teks Web</h3>
+                <form onsubmit="saveGeneralSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nama Angkatan</label>
+                        <input type="text" id="cfgSiteTitle" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Slogan / Slogan Utama</label>
+                        <input type="text" id="cfgTagline" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold mb-1">Quote Hero Utama</label>
+                        <input type="text" id="cfgQuote" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold mb-1">Deskripsi Filosofi Angkatan</label>
+                        <textarea id="cfgAboutDesc" rows="3" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">URL Foto Banner Hero</label>
+                        <input type="url" id="cfgBannerImg" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Tahun Masuk - Lulus</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="cfgYearIn" placeholder="2022" class="w-1/2 px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" id="cfgYearOut" placeholder="2026" class="w-1/2 px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 pt-2">
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-all">
+                            Simpan Perubahan Identitas <i class="fa-solid fa-check ml-1"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TAB 2: MEMBERS MANAGEMENT -->
+            <div id="cmsContentMembers" class="cms-content-block hidden space-y-6">
+                <!-- Add Member Form -->
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="text-lg font-bold border-b border-slate-700/50 pb-3 mb-4">Tambah / Edit Anggota</h3>
+                    <form id="memberForm" onsubmit="saveMember(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="hidden" id="adminMemberId">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Nama Lengkap</label>
+                            <input type="text" id="adminMemberName" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Kelas / Divisi</label>
+                            <input type="text" id="adminMemberClass" required placeholder="Contoh: IPA 1 / Kelas A" class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Cita - Cita</label>
+                            <input type="text" id="adminMemberDream" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold mb-1">URL Foto Profil</label>
+                            <input type="url" id="adminMemberAvatar" required placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Quote Singkat</label>
+                            <input type="text" id="adminMemberQuote" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="md:col-span-3 flex gap-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-all">Simpan Anggota</button>
+                            <button type="button" onclick="resetMemberForm()" class="px-4 py-2.5 rounded-xl glass-card font-bold text-xs text-slate-400 hover:text-white">Reset Form</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Table Members -->
+                <div class="glass-card p-6 rounded-3xl overflow-x-auto">
+                    <h3 class="text-lg font-bold mb-4">Daftar Anggota Angkatan</h3>
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-700/50 text-slate-400">
+                                <th class="py-3 px-2">Foto</th>
+                                <th class="py-3 px-2">Nama</th>
+                                <th class="py-3 px-2">Kelas</th>
+                                <th class="py-3 px-2">Cita-cita</th>
+                                <th class="py-3 px-2 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMembersTable">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: STRUCTURE MANAGEMENT -->
+            <div id="cmsContentStructure" class="cms-content-block hidden glass-card p-6 rounded-3xl space-y-6">
+                <h3 class="text-lg font-bold border-b border-slate-700/50 pb-3">Kelola Pengurus Inti Angkatan</h3>
+                <div id="adminStructureFormContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Structure fields dynamically loaded -->
+                </div>
+            </div>
+
+            <!-- TAB 4: GALLERY MANAGEMENT -->
+            <div id="cmsContentGallery" class="cms-content-block hidden space-y-6">
+                <div class="glass-card p-6 rounded-3xl">
+                    <h3 class="text-lg font-bold border-b border-slate-700/50 pb-3 mb-4">Tambah Foto Galeri</h3>
+                    <form onsubmit="saveGalleryItem(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Judul Foto</label>
+                            <input type="text" id="adminGalTitle" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Kategori Album</label>
+                            <select id="adminGalCategory" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="acara" class="bg-slate-900">Acara Resmi</option>
+                                <option value="hangout" class="bg-slate-900">Hangout</option>
+                                <option value="perpisahan" class="bg-slate-900">Perpisahan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">URL Foto Image</label>
+                            <input type="url" id="adminGalImg" required placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-semibold mb-1">Deskripsi Momen</label>
+                            <input type="text" id="adminGalDesc" required class="w-full px-4 py-2.5 rounded-xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="md:col-span-3">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 transition-all">Upload Kebersamaan Baru</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Gallery Table -->
+                <div class="glass-card p-6 rounded-3xl overflow-x-auto">
+                    <h3 class="text-lg font-bold mb-4">Daftar Foto Galeri</h3>
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-700/50 text-slate-400">
+                                <th class="py-3 px-2">Preview</th>
+                                <th class="py-3 px-2">Judul</th>
+                                <th class="py-3 px-2">Kategori</th>
+                                <th class="py-3 px-2">Deskripsi</th>
+                                <th class="py-3 px-2 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminGalleryTable">
+                            <!-- Dynamically loaded -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="glass border-t border-slate-200 dark:border-slate-800/80 py-8 px-4 text-center">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-left">
+                <span id="footerSiteTitle" class="font-extrabold text-indigo-500">VORTEX '26</span>
+                <p class="text-xs text-slate-500 mt-0.5">Website Resmi Angkatan & CMS Management System © 2026.</p>
+            </div>
+            <div class="flex gap-4 text-slate-400 text-lg">
+                <a href="#" class="hover:text-indigo-500 transition-colors"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-indigo-500 transition-colors"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="#" class="hover:text-indigo-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: PROFILE DETAIL -->
+    <div id="profileModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card bg-slate-900 border border-slate-700/50 w-full max-w-lg rounded-3xl p-6 relative text-slate-100 shadow-2xl">
+            <button id="closeProfileModal" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                <img id="modalAvatar" src="" alt="" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover shadow-lg border-2 border-indigo-500/50">
+                <div class="text-center sm:text-left flex-1">
+                    <span id="modalClass" class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-semibold"></span>
+                    <h3 id="modalName" class="text-xl font-bold mt-2"></h3>
+                    <p id="modalQuote" class="text-xs text-slate-400 italic mt-1"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 space-y-3">
+                <div>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Cita - Cita / Impian</span>
+                    <p id="modalDream" class="text-sm font-medium text-slate-300"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: LIGHTBOX GALLERY -->
+    <div id="lightboxModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+        <button id="closeLightbox" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+        <div class="max-w-4xl max-h-[80vh] overflow-hidden rounded-2xl shadow-2xl mb-4">
+            <img id="lightboxImg" src="" alt="" class="w-full h-full object-contain">
+        </div>
+        <div class="text-center text-white max-w-xl">
+            <h4 id="lightboxTitle" class="text-lg font-bold"></h4>
+            <p id="lightboxDesc" class="text-xs text-slate-400 mt-1"></p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // --- INITIAL DEFAULT DATA ---
+        const DEFAULT_CONFIG = {
+            siteTitle: "VORTEX '26",
+            tagline: "Sejuta Kenangan Abadi",
+            quote: '"We came as strangers, stayed as family, and leave as legends."',
+            aboutDesc: "Nama VORTEX '26 melambangkan pusaran positif yang menyatukan beragam karakter, bakat, dan latar belakang menjadi satu kesatuan yang solid dan berdaya saing tinggi.",
+            yearIn: "2022",
+            yearOut: "2026",
+            slogan: "Unite to Conquer",
+            bannerImg: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1600&q=80"
+        };
+
+        const DEFAULT_STRUCTURE = [
+            { id: 1, role: "Ketua Angkatan", name: "Arya Satria", quote: "Memimpin dengan aksi.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80", color: "indigo" },
+            { id: 2, role: "Wakil Ketua", name: "Rian Pratama", quote: "Mendukung visi bersama.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80", color: "purple" },
+            { id: 3, role: "Sekretaris", name: "Nabila Putri", quote: "Rapi dalam administrasi.", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80", color: "pink" },
+            { id: 4, role: "Bendahara", name: "Siti Rahma", quote: "Transparansi keuangan.", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", color: "emerald" }
+        ];
+
+        const DEFAULT_MEMBERS = [
+            { id: 1, name: "Aditya Wijaya", class: "IPA 1 / Kelas A", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80", quote: "Tetap tenang, kuasai keadaan.", dream: "Software Engineer" },
+            { id: 2, name: "Clarissa Amanda", class: "IPA 1 / Kelas A", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80", quote: "Senyum adalah obat paling ampuh.", dream: "Dokter Spesialis" },
+            { id: 3, name: "David Kurnia", class: "IPA 2 / Kelas B", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80", quote: "Nikmati setiap detik prosesnya.", dream: "Data Scientist" },
+            { id: 4, name: "Elena Rostova", class: "IPS 1 / Kelas C", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80", quote: "Kreativitas tanpa batas.", dream: "Art Director" }
+        ];
+
+        const DEFAULT_GALLERY = [
+            { id: 1, title: "Foto Bersama Kelulusan", category: "perpisahan", img: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=800&q=80", desc: "Momen puncak merayakan kelulusan bersama." },
+            { id: 2, title: "Keseruan Pensi Angkatan", category: "acara", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80", desc: "Penampilan band angkatan di panggung utama." },
+            { id: 3, title: "Nongkrong Santai Sore", category: "hangout", img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80", desc: "Kumpul santai sepulang sekolah." }
+        ];
+
+        const DEFAULT_PASSCODE = "VORTEX2026";
+
+        // --- APP STATE ---
+        let appConfig = JSON.parse(localStorage.getItem('vortex_config')) || DEFAULT_CONFIG;
+        let appStructure = JSON.parse(localStorage.getItem('vortex_structure')) || DEFAULT_STRUCTURE;
+        let appMembers = JSON.parse(localStorage.getItem('vortex_members')) || DEFAULT_MEMBERS;
+        let appGallery = JSON.parse(localStorage.getItem('vortex_gallery')) || DEFAULT_GALLERY;
+        let appGuestbook = JSON.parse(localStorage.getItem('vortex_guestbook')) || [];
+        let adminUsers = JSON.parse(localStorage.getItem('vortex_admins')) || [];
+        let currentAdmin = JSON.parse(sessionStorage.getItem('vortex_current_admin')) || null;
+
+        // --- VIEW CONTROLLER ---
+        function toggleAdminView() {
+            const publicView = document.getElementById('publicView');
+            const adminView = document.getElementById('adminView');
+            const btnText = document.getElementById('adminBtnText');
+
+            if (adminView.classList.contains('hidden')) {
+                publicView.classList.add('hidden');
+                adminView.classList.remove('hidden');
+                btnText.textContent = "Kembali ke Web";
+                checkAdminAuthStatus();
+            } else {
+                adminView.classList.add('hidden');
+                publicView.classList.remove('hidden');
+                btnText.textContent = currentAdmin ? "Dashboard Admin" : "Login Admin";
+            }
+        }
+
+        function checkAdminAuthStatus() {
+            const authSection = document.getElementById('adminAuthSection');
+            const dashboardSection = document.getElementById('adminDashboardSection');
+
+            if (currentAdmin) {
+                authSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                document.getElementById('currentAdminName').textContent = currentAdmin.name;
+                populateCmsForms();
+            } else {
+                dashboardSection.classList.add('hidden');
+                authSection.classList.remove('hidden');
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('adminLoginForm');
+            const regForm = document.getElementById('adminRegisterForm');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                tabLoginBtn.className = "flex-1 pb-3 text-center font-bold text-sm text-indigo-500 border-b-2 border-indigo-500";
+                tabRegisterBtn.className = "flex-1 pb-3 text-center font-bold text-sm text-slate-400 hover:text-slate-200";
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                tabRegisterBtn.className = "flex-1 pb-3 text-center font-bold text-sm text-indigo-500 border-b-2 border-indigo-500";
+                tabLoginBtn.className = "flex-1 pb-3 text-center font-bold text-sm text-slate-400 hover:text-slate-200";
+            }
+        }
+
+        // --- AUTH HANDLERS ---
+        function handleAdminRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const passcode = document.getElementById('regPasscode').value;
+
+            if (passcode !== DEFAULT_PASSCODE) {
+                alert("Kode Angkatan Salah! Hanya panitia/admin berwenang yang dapat mendaftar.");
+                return;
+            }
+
+            if (adminUsers.some(u => u.email === email)) {
+                alert("Email sudah terdaftar sebagai Admin!");
+                return;
+            }
+
+            const newAdmin = { name, email, password };
+            adminUsers.push(newAdmin);
+            localStorage.setItem('vortex_admins', JSON.stringify(adminUsers));
+
+            alert("Pendaftaran Admin Berhasil! Silakan Login.");
+            document.getElementById('adminRegisterForm').reset();
+            switchAuthTab('login');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Pre-defined default admin fallback
+            if (adminUsers.length === 0 && email === "admin@vortex.com" && password === "admin123") {
+                const defaultUser = { name: "Super Admin", email: "admin@vortex.com" };
+                currentAdmin = defaultUser;
+                sessionStorage.setItem('vortex_current_admin', JSON.stringify(currentAdmin));
+                checkAdminAuthStatus();
+                return;
+            }
+
+            const found = adminUsers.find(u => u.email === email && u.password === password);
+            if (found) {
+                currentAdmin = found;
+                sessionStorage.setItem('vortex_current_admin', JSON.stringify(currentAdmin));
+                checkAdminAuthStatus();
+            } else {
+                alert("Email atau Password Admin salah! (Gunakan email & password yang sudah terdaftar)");
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('vortex_current_admin');
+            currentAdmin = null;
+            checkAdminAuthStatus();
+            document.getElementById('adminBtnText').textContent = "Login Admin";
+        }
+
+        // --- CMS TAB & FORM HANDLING ---
+        function switchCmsTab(tabName) {
+            document.querySelectorAll('.cms-tab-btn').forEach(b => {
+                b.className = "cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold glass-card hover:bg-indigo-500/20";
+            });
+            document.querySelectorAll('.cms-content-block').forEach(b => b.classList.add('hidden'));
+
+            if (tabName === 'general') {
+                document.getElementById('cmsTabGeneral').className = "cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white";
+                document.getElementById('cmsContentGeneral').classList.remove('hidden');
+            } else if (tabName === 'members') {
+                document.getElementById('cmsTabMembers').className = "cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white";
+                document.getElementById('cmsContentMembers').classList.remove('hidden');
+            } else if (tabName === 'structure') {
+                document.getElementById('cmsTabStructure').className = "cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white";
+                document.getElementById('cmsContentStructure').classList.remove('hidden');
+            } else if (tabName === 'gallery') {
+                document.getElementById('cmsTabGallery').className = "cms-tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white";
+                document.getElementById('cmsContentGallery').classList.remove('hidden');
+            }
+        }
+
+        function populateCmsForms() {
+            // General settings
+            document.getElementById('cfgSiteTitle').value = appConfig.siteTitle;
+            document.getElementById('cfgTagline').value = appConfig.tagline;
+            document.getElementById('cfgQuote').value = appConfig.quote;
+            document.getElementById('cfgAboutDesc').value = appConfig.aboutDesc;
+            document.getElementById('cfgBannerImg').value = appConfig.bannerImg;
+            document.getElementById('cfgYearIn').value = appConfig.yearIn;
+            document.getElementById('cfgYearOut').value = appConfig.yearOut;
+
+            // Render tables
+            renderAdminMembersTable();
+            renderAdminStructureForm();
+            renderAdminGalleryTable();
+        }
+
+        function saveGeneralSettings(e) {
+            e.preventDefault();
+            appConfig = {
+                siteTitle: document.getElementById('cfgSiteTitle').value,
+                tagline: document.getElementById('cfgTagline').value,
+                quote: document.getElementById('cfgQuote').value,
+                aboutDesc: document.getElementById('cfgAboutDesc').value,
+                bannerImg: document.getElementById('cfgBannerImg').value,
+                yearIn: document.getElementById('cfgYearIn').value,
+                yearOut: document.getElementById('cfgYearOut').value,
+                slogan: appConfig.slogan || "Unite to Conquer"
+            };
+            localStorage.setItem('vortex_config', JSON.stringify(appConfig));
+            renderPublicUI();
+            alert("Identitas angkatan berhasil disimpan & diubah!");
+        }
+
+        // --- MEMBER CRUD ---
+        function renderAdminMembersTable() {
+            const tbody = document.getElementById('adminMembersTable');
+            tbody.innerHTML = '';
+            appMembers.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800/60 hover:bg-slate-800/30";
+                tr.innerHTML = `
+                    <td class="py-2 px-2"><img src="${m.avatar}" class="w-8 h-8 rounded-lg object-cover"></td>
+                    <td class="py-2 px-2 font-bold">${m.name}</td>
+                    <td class="py-2 px-2">${m.class}</td>
+                    <td class="py-2 px-2">${m.dream}</td>
+                    <td class="py-2 px-2 text-right">
+                        <button onclick="editMember(${m.id})" class="text-indigo-400 hover:text-indigo-300 mr-2"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteMember(${m.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveMember(e) {
+            e.preventDefault();
+            const id = document.getElementById('adminMemberId').value;
+            const name = document.getElementById('adminMemberName').value;
+            const className = document.getElementById('adminMemberClass').value;
+            const dream = document.getElementById('adminMemberDream').value;
+            const avatar = document.getElementById('adminMemberAvatar').value;
+            const quote = document.getElementById('adminMemberQuote').value;
+
+            if (id) {
+                const idx = appMembers.findIndex(m => m.id == id);
+                if (idx !== -1) {
+                    appMembers[idx] = { id: parseInt(id), name, class: className, dream, avatar, quote };
+                }
+            } else {
+                const newObj = { id: Date.now(), name, class: className, dream, avatar, quote };
+                appMembers.push(newObj);
+            }
+
+            localStorage.setItem('vortex_members', JSON.stringify(appMembers));
+            resetMemberForm();
+            renderAdminMembersTable();
+            renderPublicUI();
+            alert("Data anggota disimpan!");
+        }
+
+        function editMember(id) {
+            const m = appMembers.find(item => item.id === id);
+            if (m) {
+                document.getElementById('adminMemberId').value = m.id;
+                document.getElementById('adminMemberName').value = m.name;
+                document.getElementById('adminMemberClass').value = m.class;
+                document.getElementById('adminMemberDream').value = m.dream;
+                document.getElementById('adminMemberAvatar').value = m.avatar;
+                document.getElementById('adminMemberQuote').value = m.quote;
+            }
+        }
+
+        function deleteMember(id) {
+            if (confirm("Yakin ingin menghapus anggota ini?")) {
+                appMembers = appMembers.filter(m => m.id !== id);
+                localStorage.setItem('vortex_members', JSON.stringify(appMembers));
+                renderAdminMembersTable();
+                renderPublicUI();
+            }
+        }
+
+        function resetMemberForm() {
+            document.getElementById('memberForm').reset();
+            document.getElementById('adminMemberId').value = '';
+        }
+
+        // --- STRUCTURE CRUD ---
+        function renderAdminStructureForm() {
+            const container = document.getElementById('adminStructureFormContainer');
+            container.innerHTML = '';
+            appStructure.forEach((s, idx) => {
+                const box = document.createElement('div');
+                box.className = "p-4 glass-card rounded-2xl space-y-3";
+                box.innerHTML = `
+                    <span class="text-xs font-bold text-indigo-400 uppercase">${s.role}</span>
+                    <input type="text" value="${s.name}" onchange="updateStructureItem(${idx}, 'name', this.value)" class="w-full px-3 py-2 rounded-xl glass-card text-xs">
+                    <input type="text" value="${s.quote}" onchange="updateStructureItem(${idx}, 'quote', this.value)" class="w-full px-3 py-2 rounded-xl glass-card text-xs">
+                    <input type="url" value="${s.avatar}" onchange="updateStructureItem(${idx}, 'avatar', this.value)" class="w-full px-3 py-2 rounded-xl glass-card text-xs">
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function updateStructureItem(index, key, val) {
+            appStructure[index][key] = val;
+            localStorage.setItem('vortex_structure', JSON.stringify(appStructure));
+            renderPublicUI();
+        }
+
+        // --- GALLERY CRUD ---
+        function renderAdminGalleryTable() {
+            const tbody = document.getElementById('adminGalleryTable');
+            tbody.innerHTML = '';
+            appGallery.forEach(g => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-800/60 hover:bg-slate-800/30";
+                tr.innerHTML = `
+                    <td class="py-2 px-2"><img src="${g.img}" class="w-10 h-8 rounded object-cover"></td>
+                    <td class="py-2 px-2 font-bold">${g.title}</td>
+                    <td class="py-2 px-2 uppercase text-[10px] font-bold text-indigo-400">${g.category}</td>
+                    <td class="py-2 px-2">${g.desc}</td>
+                    <td class="py-2 px-2 text-right">
+                        <button onclick="deleteGalleryItem(${g.id})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveGalleryItem(e) {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                title: document.getElementById('adminGalTitle').value,
+                category: document.getElementById('adminGalCategory').value,
+                img: document.getElementById('adminGalImg').value,
+                desc: document.getElementById('adminGalDesc').value
+            };
+
+            appGallery.push(newItem);
+            localStorage.setItem('vortex_gallery', JSON.stringify(appGallery));
+            renderAdminGalleryTable();
+            renderPublicUI();
+            alert("Foto galeri baru ditambahkan!");
+        }
+
+        function deleteGalleryItem(id) {
+            if (confirm("Hapus foto ini dari galeri?")) {
+                appGallery = appGallery.filter(g => g.id !== id);
+                localStorage.setItem('vortex_gallery', JSON.stringify(appGallery));
+                renderAdminGalleryTable();
+                renderPublicUI();
+            }
+        }
+
+        // --- EXPORT JSON ---
+        function exportDataJSON() {
+            const data = {
+                config: appConfig,
+                structure: appStructure,
+                members: appMembers,
+                gallery: appGallery
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Backup_Web_Angkatan_${appConfig.siteTitle}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // --- RENDER PUBLIC UI ---
+        function renderPublicUI() {
+            // General Titles
+            document.getElementById('navSiteTitle').textContent = appConfig.siteTitle;
+            document.getElementById('footerSiteTitle').textContent = appConfig.siteTitle;
+            document.getElementById('heroTagline').textContent = appConfig.tagline;
+            document.getElementById('heroQuote').textContent = appConfig.quote;
+            document.getElementById('aboutDesc').textContent = appConfig.aboutDesc;
+            document.getElementById('statYearIn').textContent = appConfig.yearIn;
+            document.getElementById('statYearOut').textContent = appConfig.yearOut;
+            document.getElementById('heroBannerImg').src = appConfig.bannerImg;
+
+            // Stats Count
+            document.getElementById('statMembersCount').textContent = appMembers.length;
+            document.getElementById('statGalleryCount').textContent = appGallery.length;
+            document.getElementById('statMessagesCount').textContent = appGuestbook.length;
+
+            // Render Structure
+            const structGrid = document.getElementById('structureGrid');
+            structGrid.innerHTML = '';
+            appStructure.forEach(s => {
+                const card = document.createElement('div');
+                card.className = `glass-card rounded-3xl p-6 text-center group hover:-translate-y-1 transition-all border-t-4 border-${s.color}-500`;
+                card.innerHTML = `
+                    <div class="w-24 h-24 mx-auto rounded-full p-1 bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
+                        <img src="${s.avatar}" alt="${s.name}" class="w-full h-full object-cover rounded-full">
+                    </div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-500 text-xs font-bold mb-2">${s.role}</span>
+                    <h3 class="font-bold text-lg">${s.name}</h3>
+                    <p class="text-xs text-slate-400 mt-1">"${s.quote}"</p>
+                `;
+                structGrid.appendChild(card);
+            });
+
+            // Populate Class Filter Dropdown
+            const classFilter = document.getElementById('classFilter');
+            const classes = [...new Set(appMembers.map(m => m.class))];
+            classFilter.innerHTML = '<option value="all" class="bg-slate-900 text-white">Semua Kelas</option>';
+            classes.forEach(c => {
+                classFilter.innerHTML += `<option value="${c}" class="bg-slate-900 text-white">${c}</option>`;
+            });
+
+            renderPublicMembers();
+            renderPublicGallery();
+            renderGuestbook();
+        }
+
+        function renderPublicMembers() {
+            const container = document.getElementById('membersContainer');
+            const query = document.getElementById('memberSearch').value.toLowerCase();
+            const selectedClass = document.getElementById('classFilter').value;
+
+            const filtered = appMembers.filter(m => {
+                const matchesSearch = m.name.toLowerCase().includes(query) || m.dream.toLowerCase().includes(query);
+                const matchesClass = selectedClass === 'all' || m.class === selectedClass;
+                return matchesSearch && matchesClass;
+            });
+
+            container.innerHTML = '';
+            filtered.forEach(m => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-3xl p-5 hover:-translate-y-1 transition-all cursor-pointer group flex flex-col justify-between";
+                card.onclick = () => openProfileModal(m);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="relative overflow-hidden rounded-2xl aspect-square mb-4">
+                            <img src="${m.avatar}" alt="${m.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-500 text-[10px] font-extrabold uppercase">${m.class}</span>
+                        <h3 class="font-bold text-base mt-2 group-hover:text-indigo-500 transition-colors">${m.name}</h3>
+                        <p class="text-xs text-slate-400 italic mt-1">"${m.quote}"</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
+                        <span>Cita-cita: <strong>${m.dream}</strong></span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderPublicGallery(filter = 'all') {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? appGallery : appGallery.filter(g => g.category === filter);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-3xl overflow-hidden group cursor-pointer hover:-translate-y-1 transition-all";
+                card.onclick = () => openLightbox(item);
+                card.innerHTML = `
+                    <div class="relative overflow-hidden aspect-video">
+                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex flex-col justify-end p-5 text-white">
+                            <span class="text-[10px] uppercase font-bold text-indigo-400 mb-1">${item.category}</span>
+                            <h4 class="font-bold text-base">${item.title}</h4>
+                            <p class="text-xs text-slate-300 font-light mt-1">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderGuestbook() {
+            const feed = document.getElementById('messagesFeed');
+            const count = document.getElementById('gbCount');
+            feed.innerHTML = '';
+            count.textContent = `${appGuestbook.length} Pesan`;
+
+            appGuestbook.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-5 rounded-2xl";
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xs">${item.name.charAt(0)}</div>
+                        <div>
+                            <h4 class="font-bold text-sm">${item.name}</h4>
+                            <span class="text-[10px] text-indigo-400 font-semibold">${item.role}</span>
+                        </div>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 pl-11">"${item.message}"</p>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        // --- GUESTBOOK SUBMISSION ---
+        document.getElementById('guestbookForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newItem = {
+                name: document.getElementById('gbName').value,
+                role: document.getElementById('gbRole').value,
+                message: document.getElementById('gbMessage').value
+            };
+            appGuestbook.unshift(newItem);
+            localStorage.setItem('vortex_guestbook', JSON.stringify(appGuestbook));
+            document.getElementById('guestbookForm').reset();
+            renderGuestbook();
+        });
+
+        // --- LISTENERS FOR SEARCH & FILTERS ---
+        document.getElementById('memberSearch').addEventListener('input', renderPublicMembers);
+        document.getElementById('classFilter').addEventListener('change', renderPublicMembers);
+
+        // --- MODAL UTILS ---
+        function openProfileModal(m) {
+            document.getElementById('modalAvatar').src = m.avatar;
+            document.getElementById('modalName').textContent = m.name;
+            document.getElementById('modalClass').textContent = m.class;
+            document.getElementById('modalQuote').textContent = `"${m.quote}"`;
+            document.getElementById('modalDream').textContent = m.dream;
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        document.getElementById('closeProfileModal').onclick = () => document.getElementById('profileModal').classList.add('hidden');
+        
+        function openLightbox(item) {
+            document.getElementById('lightboxImg').src = item.img;
+            document.getElementById('lightboxTitle').textContent = item.title;
+            document.getElementById('lightboxDesc').textContent = item.desc;
+            document.getElementById('lightboxModal').classList.remove('hidden');
+        }
+        document.getElementById('closeLightbox').onclick = () => document.getElementById('lightboxModal').classList.add('hidden');
+
+        // Theme Toggle
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Mobile Menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // INIT ON LOAD
+        window.onload = function() {
+            renderPublicUI();
+            if (currentAdmin) {
+                document.getElementById('adminBtnText').textContent = "Dashboard Admin";
+            }
+        };
+    </script>
+</body>
+</html>
